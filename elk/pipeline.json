@@ -1,0 +1,32 @@
+PUT _ingest/pipeline/status-trem_parser
+{
+  "description": "Padroniza dados de status de transporte",
+  "processors": [
+    {
+      "set": {
+        "field": "_source.timestamp",
+        "value": "{{{hora}}}"
+      }
+    },
+    {
+      "date": {
+        "field": "_source.timestamp",
+        "formats": ["yyyy-MM-dd HH:mm:ss"],
+        "target_field": "@timestamp"
+      }
+    },
+    {
+      "set": {
+        "description": "Cria o atributo de linha como 'principal' quando não existir.",
+        "field": "linha",
+        "value": "principal",
+        "if": "ctx.linha == null"
+      }
+    },
+    {
+      "remove": {
+        "field": "_source.hora"
+      }
+    }
+  ]
+}

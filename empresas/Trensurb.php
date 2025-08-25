@@ -1,3 +1,4 @@
+<?php
 class Trensurb extends Empresa {
 
     protected string $url = 'https://sisop.trensurb.gov.br/App/getSituacaoOperacional.php?user=trensite&senha=h1ATPtmrKiOxe3qC';

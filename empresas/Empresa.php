@@ -1,16 +1,11 @@
+<?php
 abstract class Empresa implements IServicoTransporte {
     /**
      * @var string A URL da API da empresa.
      */
     protected string $url;
 
-    /**
-     * Construtor da classe Empresa.
-     *
-     * @param string $url A URL da API.
-     */
-    public function __construct(string $url) {
-        $this->url = $url;
+    public function __construct() {
     }
 
     /**

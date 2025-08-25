@@ -1,4 +1,6 @@
 <?php
+include_once('Empresa.php');
+
 class CPTM extends Empresa {
 
     protected string $url = 'https://api.cptm.sp.gov.br/AppCPTM/v1/Linhas/ObterStatus';

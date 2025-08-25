@@ -1,3 +1,4 @@
+<?php
 class MetroSP extends Empresa {
 
     protected string $url = 'https://www.metro.sp.gov.br/wp-content/themes/metrosp/direto-metro.php';

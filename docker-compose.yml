@@ -11,7 +11,5 @@ services:
     env_file:
       - .env
     # Monta o diretório atual do projeto no diretório /app do container.
-    # Isso permite que você edite os arquivos localmente e os veja
-    # rodando dentro do container sem precisar reconstruir a imagem.
     volumes:
       - .:/app

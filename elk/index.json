@@ -1,0 +1,29 @@
+PUT /status-trem
+{
+  "settings": {
+    "number_of_replicas": 0,
+    "number_of_shards": 1,
+    "index.default_pipeline": "date-ingest"
+  },
+  "mappings": {
+    "properties": {
+      "datetime": {"type": "date"},
+      "empresa": {
+        "type": "text", 
+        "fielddata" : true 
+      },
+      "linha": {
+        "type": "text", 
+        "fielddata" : true 
+      },
+      "descricao": {
+        "type": "text", 
+        "fielddata" : true 
+      },
+      "status": {
+        "type": "text", 
+        "fielddata" : true 
+      }
+    }
+  }
+}

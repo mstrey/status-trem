@@ -1,4 +1,8 @@
 <?php
+include_once('empresas/Trensurb.php');
+include_once('empresas/CPTM.php');
+include_once('empresas/MetroSP.php');
+
 $empresas = [
     new Trensurb(),
     new CPTM(),

@@ -1,4 +1,6 @@
 <?php
+include_once('IServicoTransporte.php');
+
 abstract class Empresa implements IServicoTransporte {
     /**
      * @var string A URL da API da empresa.

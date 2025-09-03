@@ -5,23 +5,29 @@ class CPTM extends Empresa {
 
     protected string $url = 'https://api.cptm.sp.gov.br/AppCPTM/v1/Linhas/ObterStatus';
 
-    protected function obterDados() {
+    private const ARR_LINHAS = [
+        7 => "Rubi",
+        10 => "Turquesa",
+        11 => "Coral",
+        12 => "Safira",
+        13 => "Jade",
+    ];
+
+    protected function obterArrStatus() {
         $json = @file_get_contents($this->url);
-        return $json ? json_decode($json, true) : null;
-    }
-
-    protected function isAlteracaoDeServico(mixed $dados) {
-        if (!is_array($dados)) {
-            return "Erro: Estrutura de dados da CPTM inválida.";
-        }
-
-        $problemas = [];
+        $dados = json_decode($json, true) ?? [];
+        $this->gravaLog("$$$$$ DADOS INI $$$$$\n");
+        $this->gravaLog(print_r($dados, true));
+        $this->gravaLog("$$$$$ DADOS FIM $$$$$\n");
+        $arrDados = [];
         foreach ($dados as $linha) {
-            // O status 'NORMAL' é o status 'normal'.
-            if (isset($linha['Status']) && $linha['Status'] !== 'NORMAL') {
-                $problemas[] = "Linha " . $linha['Linha'] . " - Situação: " . $linha['Status'] . " - " . $linha['Descricao'];
-            }
+            $arrDados[] = [
+                "linha" => self::ARR_LINHAS[$linha['linhaId']],
+                "status" => $linha['status'],
+                "descricao" => $linha['descricao']
+            ];
         }
-        return count($problemas) > 0 ? implode("\n", $problemas) : false;
+        return $arrDados;
     }
+
 }

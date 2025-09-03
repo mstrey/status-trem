@@ -5,20 +5,30 @@ class Trensurb extends Empresa {
 
     protected string $url = 'https://sisop.trensurb.gov.br/App/getSituacaoOperacional.php?user=trensite&senha=h1ATPtmrKiOxe3qC';
 
-    protected function obterDados() {
+    protected const ARR_SITUACAO_NORMAL = [4];
+
+    protected function obterArrStatus() {
         $json = @file_get_contents($this->url);
-        return $json ? json_decode($json, true) : null;
+        $linha = json_decode($json, true) ?? [];
+        $this->gravaLog("$$$$$ DADOS INI $$$$$\n");
+        $this->gravaLog(print_r($linha, true));
+        $this->gravaLog("$$$$$ DADOS FIM $$$$$\n");
+        $arrDados = [];
+        
+        $arrDados[] = [
+            "linha" => "Principal",
+            "status" => $this->getStatus($linha['status-situacao-operacional']),
+            "descricao" => "{$linha['descricao-situacao-operacional']} - {$linha['motivo']}"
+        ];
+        return $arrDados;
     }
 
-    protected function isAlteracaoDeServico(mixed $dados) {
-        if (!isset($dados['situacao'])) {
-            return "Erro: Estrutura de dados da Trensurb não encontrada.";
-        }
-
-        // A situação 'Em Operação Normal' é o status 'normal'.
-        if ($dados['situacao'] !== 'Em Operação Normal') {
-            return "Situação: {$dados['situacao']} - Descrição: {$dados['descricao']}";
-        }
-        return false;
+    private function getStatus(string $id) {
+        return match ($id) {
+            "4" => "Operação Normal",
+            //4 => "Operação com alteração de serviço.",
+            default => "Operação com alteração de serviço."
+        };
     }
+
 }

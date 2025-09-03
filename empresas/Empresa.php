@@ -7,6 +7,13 @@ abstract class Empresa implements IServicoTransporte {
      */
     protected string $url;
 
+    public const LOG_FILE = '/app/console.log';
+
+    protected function gravaLog(string $texto) {
+        $hora = date('Y-m-d H:i:s 0');
+        file_put_contents(self::LOG_FILE, "$hora >> $texto\n", FILE_APPEND);
+    }
+
     public function __construct() {
     }
 
@@ -17,29 +24,26 @@ abstract class Empresa implements IServicoTransporte {
      *
      * @return mixed Os dados da API, geralmente um array ou objeto.
      */
-    abstract protected function obterDados();
-
-    /**
-     * Método abstrato para verificar se há uma alteração de serviço.
-     * Retorna a descrição do problema se houver, ou false caso contrário.
-     *
-     * @param mixed $dados Os dados obtidos da API.
-     * @return string|false A descrição da alteração ou false.
-     */
-    abstract protected function isAlteracaoDeServico(mixed $dados);
+    abstract protected function obterArrStatus();
 
     /**
      * Método que simula o salvamento de dados em um serviço Elastic (ELK).
      *
-     * @param string $descricao A descrição da alteração de serviço.
-     * @param string $hora A hora em que a alteração foi detectada.
+     * @param array $status dados de status da linha
      */
-    protected function salvarDados(string $descricao, string $hora) {
-        echo "--> Simulação de envio para o Elastic:\n";
-        echo "  - Empresa: " . get_class($this) . "\n";
-        echo "  - Hora: {$hora}\n";
-        echo "  - Descrição: {$descricao}\n";
-        echo "----------------------------------------\n";
+    protected function salvarStatus(array $status) {
+        $empresa = get_class($this);
+        $registro = <<<JSON
+            {
+                "empresa": "$empresa",
+                "linha": "{$status['linha']}",
+                "descricao": "{$status['descricao']}",
+                "status": "{$status['status']}"
+            }
+JSON;
+        $this->gravaLog("***** JSON INI *****\n");
+        $this->gravaLog($registro);
+        $this->gravaLog("***** JSON FIM *****\n");
     }
 
     /**
@@ -47,17 +51,11 @@ abstract class Empresa implements IServicoTransporte {
      * Implementa a lógica principal do projeto.
      */
     public function checarStatus() {
-        echo "Verificando status de " . get_class($this) . "...\n";
-        $dados = $this->obterDados();
-        $descricao = $this->isAlteracaoDeServico($dados);
-
-        if ($descricao !== false) {
-            $hora = date('Y-m-d H:i:s');
-            echo "Status fora do normal! {$descricao}\n";
-            $this->salvarDados($descricao, $hora);
-        } else {
-            echo "Status normal. Nenhuma alteração a ser registrada.\n";
-            echo "----------------------------------------\n";
+        $this->gravaLog("##### " . get_class($this) . " INI #####\n");
+        $arrStatus = $this->obterArrStatus();
+        foreach ($arrStatus as $status) {
+            $this->salvarStatus($status);
         }
+        $this->gravaLog("##### " . get_class($this) . " FIM #####\n");
     }
 }

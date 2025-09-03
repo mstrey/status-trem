@@ -1,15 +1,9 @@
-version: '3.8'
 services:
   transporte-status:
-    # Constrói a imagem a partir do Dockerfile no diretório atual
-    build: .
-    # Nome amigável para o container
+    image: php:8.2-cli-alpine
     container_name: transporte-status-container
-    # Reinicia o container automaticamente caso ele pare
-    restart: unless-stopped
-    # Carrega as variáveis de ambiente do arquivo .env
-    env_file:
-      - .env
-    # Monta o diretório atual do projeto no diretório /app do container.
+    entrypoint: ["php", "/app/checkStatus.php"]
     volumes:
       - .:/app
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
